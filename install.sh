@@ -14,7 +14,7 @@ if [ -z "$APIKEY" ]; then
     exit 0;
 fi
 
-cat <<EOF > /srv/www/wafhub-remote/run.sh
+cat <<EOF > /srv/wafhub-remote/run.sh
 #!/bin/bash
 
 allLogFiles () {
@@ -24,7 +24,7 @@ allLogFiles () {
     do
         filesize=\$(stat -c%s "\$f")
         if [ \$filesize ]; then
-            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F host=$HOSTNAME&log=@\$f
+            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F web=nginx&host=$HOSTNAME&log=@\$f
         fi
         sleep 10s
     done
@@ -34,7 +34,7 @@ allLogFiles () {
     do
         filesize=\$(stat -c%s "\$f")
         if [ \$filesize ]; then
-            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F host=$HOSTNAME&log=@\$f
+            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F web=apache&host=$HOSTNAME&log=@\$f
         fi
 
         sleep 10s
@@ -46,7 +46,7 @@ allLogFiles
 
 EOF
 
-cat <<EOF > /srv/www/wafhub-remote/wafhub.service
+cat <<EOF > /srv/wafhub-remote/wafhub.service
 [Unit]
 Description=WAFHUB Log Service
 
@@ -55,7 +55,7 @@ User=root
 Type=simple
 TimeoutSec=0
 PIDFile=/run/wafhub.pid
-ExecStart=/bin/bash /srv/www/wafhub-remote/run.sh > /dev/null 2>/dev/null
+ExecStart=/bin/bash /srv/wafhub-remote/run.sh > /dev/null 2>/dev/null
 ExecStop=/bin/kill -HUP \$MAINPID
 ExecReload=/bin/kill -HUP \$MAINPID
 KillMode=process
@@ -70,7 +70,7 @@ WantedBy=default.target
 EOF
 
 sudo rm /etc/systemd/system/wafhub.service
-sudo ln -s /srv/www/wafhub-remote/wafhub.service /etc/systemd/system/wafhub.service
+sudo ln -s /srv/wafhub-remote/wafhub.service /etc/systemd/system/wafhub.service
 
 sudo systemctl daemon-reload
 sudo systemctl start wafhub
