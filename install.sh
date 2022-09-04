@@ -24,7 +24,7 @@ allLogFiles () {
     do
         filesize=\$(stat -c%s "\$f")
         if [ \$filesize ]; then
-            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F "web=nginx" -F "host=$HOSTNAME" -F "log=@\$f"
+            curl https://api.wafhub.com/logs -H "Authorization: Bearer $APIKEY" -F "web=nginx" -F "host=$HOSTNAME" -F "log=@\$f"
         fi
         sleep 10s
     done
@@ -34,7 +34,7 @@ allLogFiles () {
     do
         filesize=\$(stat -c%s "\$f")
         if [ \$filesize ]; then
-            curl https://wafhub.com/api/logs -H "Authorization: Bearer $APIKEY" -F "web=apache" -F "host=$HOSTNAME" -F "log=@\$f"
+            curl https://api.wafhub.com/logs -H "Authorization: Bearer $APIKEY" -F "web=apache" -F "host=$HOSTNAME" -F "log=@\$f"
         fi
 
         sleep 10s
